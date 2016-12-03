@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package>
-  <name>teki_kinect_odometry</name>
+  <name>odom_velodyne</name>
   <version>0.0.1</version>
-  <description>The teki_kinect_odometry package</description>
+  <description>Lidar odometry using Velodyne VLP16</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="nlz@bmfnik.hu">Nagy László Zoltán</maintainer>
+  <maintainer email="a"></maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
