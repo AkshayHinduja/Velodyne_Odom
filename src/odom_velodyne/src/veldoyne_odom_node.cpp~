@@ -1,0 +1,60 @@
+#include <ros/ros.h>
+#include <ros/console.h>
+
+#include <sensor_msgs/PointCloud2.h>
+#include <geometry_msgs/Transform.h>
+
+#include <pcl_conversions/pcl_conversions.h>
+#include <eigen_conversions/eigen_msg.h>
+
+// PCL specific includes
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+
+#include <pcl/registration/icp.h>
+#include <pcl/filters/filter_indices.h>
+#include <pcl/filters/voxel_grid.h>
+
+//intitialise pointers and instances
+ pcl::PCLPointCloud2::Ptr cloud_filtered (new pcl::PCLPointCloud2);
+ pcl::PCLPointCloud2::Ptr temp_ptr (new pcl::PCLPointCloud2);
+ pcl::VoxelGrid<pcl::PCLPointCloud2> vox_cloud;
+ pcl::PassThrough<pcl::PCLPointCloud2> pass;
+ 
+//passthrough filter to remove extended data. 
+//X direction
+pass.setInputCloud (input);
+pass.setFilterFieldName("x");
+pass.setFilterLimits(-3.0,3.0);
+pass.filter(*temp_ptr);
+//Y direction
+pass.setInputCloud (temp_ptr);
+pass.setFilterFieldName("y");
+pass.setFilterLimits(-3.0,3.0);
+pass.filter(*temp_ptr);
+//Z direction
+pass.setInputCloud (temp_ptr);
+pass.setFilterFieldName("z");
+pass.setFilterLimits(-2.0,2.0);
+pass.filter(*temp_ptr); 
+//Voxel grid
+vox_cloud.setInputCloud (temp_ptr);
+ vox_cloud.setLeafSize (0.05, 0.05, 0.05);
+ vox_cloud.filter (*cloud_filtered);
+//publish filtered cloud
+ pub.publish (cloud_filtered);
+
+}
+
+int main (int argc, char** argv)
+{
+ // Initialize ROS
+ ros::init (argc, argv, "Velodyne_PCL");
+ ros::NodeHandle nh;
+ // Create a ROS subscriber for the input point cloud
+ ros::Subscriber sub = nh.subscribe ("velodyne_points", 1,cloud_cb);
+ // Create a ROS publisher for the output point cloud
+ pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
+ // Spin
+ ros::spin ();
+}
